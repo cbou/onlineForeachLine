@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Online foreach line</title>
+
+    <link rel="stylesheet/less" type="text/css" href="less/bootstrap.less">
+    <link rel="stylesheet/less" type="text/css" href="less/custom.less">
+    <script src="js/less-1.1.5.min.js" type="text/javascript"></script>
+    <script src="js/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <script src="js/mustache.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="topbar" data-scrollspy="scrollspy">
+      <div class="topbar-inner">
+        <div class="container">
+          <button class="btn primary foreach-btn">foreach()</button>
+          <ul class="nav">
+            <li><a class="scroll-to-btn" href="#lines" data-scroll="lines">Lines</a></li>
+            <li><a class="scroll-to-btn" href="#templates" data-scroll="template">Template</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+        <section id="lines">
+            <h2>Lines:</h2>
+            <textarea class="lines">line 1
+    line two
+    third line</textarea>
+        </section>
+
+        <section id="template">
+            <h2>Template (use mustache):</h2>
+            <textarea class="template">Hello {{line}}
+{{line}} World
+
+ </textarea>
+            </section>
+
+        <br />
+
+        <section id="result">
+            <div class="result-container">
+                
+            </div>
+        </section>
+    </div>
+
+    <script type="text/html" class="template-result">
+        <h2>Result:</h2>
+<pre class="result-container">{{#templatedLines}}{{.}}
+{{/templatedLines}}</pre>
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('.scroll-to-btn').click(function(){
+                var $btn = $(this);
+                var $section = $('#' + $btn.data('scroll'));
+                var $textarea = $('#' + $btn.data('scroll')).find('textarea');
+                $('html, body').animate({
+                    scrollTop: $section.offset().top
+                }, 300, function(){
+                    console.log($textarea);
+                    $textarea.focus();
+                });
+
+                return false;
+            });
+            
+            $('.foreach-btn').click(function(){
+                var template = $('.template').val();
+                var lines = $('.lines').val().split('\n');
+                var templatedLines = [];
+
+                $(lines).each(function(){                 
+                    templatedLines.push( Mustache.to_html(template, {line: this}) );
+                });
+
+                $('.result-container').html(
+                    Mustache.to_html($('.template-result').html(), {
+                        'templatedLines' : templatedLines
+                    })
+                );
+
+                $('html, body').animate({
+                    scrollTop: $("#result").offset().top
+                }, 300);
+
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>
+
